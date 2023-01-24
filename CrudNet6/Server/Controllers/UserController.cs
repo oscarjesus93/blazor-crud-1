@@ -23,5 +23,11 @@ namespace CrudNet6.Server.Controllers
             return await Task.FromResult(serviceUser.GetUsers());
         }
 
+        [HttpPost]
+        public void Post([FromBody] User user)
+        {
+            serviceUser.PostUser(user);
+        }
+
     }
 }

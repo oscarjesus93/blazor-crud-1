@@ -33,7 +33,18 @@ namespace CrudNet6.Server.Service
 
         public void PostUser(User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                user.FechaAlta = DateTime.Now;
+                _Context.Users.Add(user);
+                _Context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
         }
 
         public void PutUser(User user)

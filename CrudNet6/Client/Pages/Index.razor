@@ -1,9 +1,61 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+@using CrudNet6.Shared
+@inject HttpClient Http
 
-<h1>Hello, world!</h1>
+<PageTitle>Usuario</PageTitle>
 
-Welcome to your new app.
+<h1>Lista de usuario</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div class="row">
+    <div class="col-md-6">
+        <a href="/usuario/nuevo" class="btn btn-primary" role="button">
+            Nuevo Usuario
+        </a>
+    </div>
+</div>
+
+@if (lista == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead class="table-info">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Telefono</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in lista)
+            {
+                <tr>
+                    @*<td>@forecast.Date.ToShortDateString()</td>*@
+                    <td>@user.Nombre</td>
+                    <td>@user.Apellido</td>
+                    <td>@user.Email</td>
+                    <td>@user.Telefono</td>
+                    <td>
+                        <a href="/user/edit/@user.Id" class="btn btn-secondary" role="button"> Editar </a>
+                        <a href="/user/delete/@user.Id" class="btn btn-danger" role="button"> Borrar </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<User> lista;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        lista = await Http.GetFromJsonAsync<List<User>>("api/User");
+    }
+}
