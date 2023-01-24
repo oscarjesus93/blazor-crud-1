@@ -23,5 +23,36 @@ namespace CrudNet6.Server.Controllers
             return await Task.FromResult(serviceUser.GetUsers());
         }
 
+        [HttpPost]
+        public void Post([FromBody] User user)
+        {
+            serviceUser.PostUser(user);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            User user = serviceUser.GetById(id);
+            if(user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+
+        [HttpPut]
+        public void Put([FromBody] User user)
+        {
+            serviceUser.PutUser(user);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            serviceUser.DeleteUser(id);
+            return Ok();
+        }
+
     }
 }

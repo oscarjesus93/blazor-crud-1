@@ -1,9 +1,97 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+@using CrudNet6.Shared
+@inject HttpClient Http
 
-<h1>Hello, world!</h1>
+<PageTitle>Usuario</PageTitle>
 
-Welcome to your new app.
+<h1>Lista de usuario</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div class="row">
+    <div class="col-md-6">
+        <a href="/usuario/nuevo" class="btn btn-primary" role="button">
+            Nuevo Usuario
+        </a>
+    </div>
+
+    <div class="input-group-append">
+        <input type="text" class="form-control" placeholder="Buscar por nombre..!" 
+        @bind="cadenaVacia" @bind:event="oninput" @onkeyup="filtroBusqueda" />
+
+        @if(cadenaVacia.Length > 0)
+        {
+            <div class="input-group-append">
+
+                <button type="button" class="btn btn-danger" @onclick="limpiarBusqueda">Limpiar</button>
+            </div>
+        }
+
+        
+
+    </div>
+</div>
+
+@if (lista == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead class="table-info">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Telefono</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in lista)
+            {
+                <tr>
+                    @*<td>@forecast.Date.ToShortDateString()</td>*@
+                    <td>@user.Nombre</td>
+                    <td>@user.Apellido</td>
+                    <td>@user.Email</td>
+                    <td>@user.Telefono</td>
+                    <td>
+                        <a href="/usuario/editar/@user.Id" class="btn btn-secondary" role="button"> Editar </a>
+                        <a href="/usuario/eliminar/@user.Id" class="btn btn-danger" role="button"> Borrar </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<User> lista;
+    private List<User> listaAux;
+    string cadenaVacia = String.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        lista = await Http.GetFromJsonAsync<List<User>>("api/User");
+        listaAux = lista;
+    }
+
+    public void filtroBusqueda()
+    {
+        if (!string.IsNullOrEmpty(cadenaVacia))
+        {
+            lista = listaAux.Where(l => l.Nombre.IndexOf(cadenaVacia, StringComparison.OrdinalIgnoreCase) != -1).ToList();
+        }else
+        {
+            lista = listaAux;
+        }
+    }
+
+    public void limpiarBusqueda()
+    {
+        cadenaVacia = string.Empty;
+        lista = listaAux;
+    }
+}
