@@ -1,4 +1,5 @@
 ﻿@page "/usuario/nuevo";
+@page "/usuario/editar/{Id:int}";
 @using CrudNet6.Shared;
 
 
@@ -51,14 +52,25 @@
 </EditForm>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
     protected string title = "Nuevo";
     protected User user = new User();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(Id != 0)
+        {
+            title = "Editar";
+            user = await HttpClient.GetFromJsonAsync<User>($"api/User/{Id.ToString()}");
+        }
+    }
 
     protected async Task SaveUser()
     {
         if (user.Id != 0)
         {
-
+            await HttpClient.PutAsJsonAsync("api/User", user);
         }
         else
         {

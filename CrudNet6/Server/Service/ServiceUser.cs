@@ -1,5 +1,6 @@
 ﻿using CrudNet6.Server.Models;
 using CrudNet6.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace CrudNet6.Server.Service
 {
@@ -15,7 +16,18 @@ namespace CrudNet6.Server.Service
 
         public User GetById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                User? user = _Context.Users.Find(id);
+                return user;
+
+            } catch (ArgumentNullException) {
+
+                throw new ArgumentNullException(nameof(id));
+
+            } catch (Exception ex) {
+                throw new Exception(ex.Message);
+            }
         }
 
         public List<User> GetUsers()
@@ -49,12 +61,38 @@ namespace CrudNet6.Server.Service
 
         public void PutUser(User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _Context.Entry(user).State = EntityState.Modified;
+                _Context.SaveChanges();
+
+            } catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
         }
 
         public void DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                User user = _Context.Users.Find(id);
+
+                if(user != null)
+                {
+                    _Context.Users.Remove(user);
+                    _Context.SaveChanges();
+                } else
+                {
+                    throw new ArgumentNullException(nameof(id));
+                }
+                
+
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
         }
     }
 }
